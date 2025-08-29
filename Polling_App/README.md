@@ -1,36 +1,98 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Polling App
+
+Welcome to the Polling App! This application allows users to create, view, and participate in polls. It includes user authentication features for secure access.
+
+## Features
+
+- **User Authentication**: Users can register, log in, and log out.
+- **Poll Management**: Users can create new polls and view existing ones.
+- **Voting Interface**: Users can vote on polls and see results.
+
+## Project Structure
+
+```
+Polling_App
+├── .gitignore
+├── eslint.config.mjs
+├── jsconfig.json
+├── next.config.mjs
+├── package.json
+├── postcss.config.mjs
+├── README.md
+├── public
+│   ├── file.svg
+│   ├── globe.svg
+│   ├── next.svg
+│   ├── vercel.svg
+│   └── window.svg
+├── src
+│   ├── app
+│   │   ├── favicon.ico
+│   │   ├── globals.css
+│   │   ├── layout.js
+│   │   ├── page.js
+│   │   ├── auth
+│   │   │   ├── login
+│   │   │   │   └── page.js
+│   │   │   ├── register
+│   │   │   │   └── page.js
+│   │   │   └── logout
+│   │   │       └── page.js
+│   │   ├── polls
+│   │   │   ├── page.js
+│   │   │   ├── create
+│   │   │   │   └── page.js
+│   │   │   └── [id]
+│   │   │       └── page.js
+│   │   └── api
+│   │       ├── auth
+│   │       │   ├── login
+│   │       │   │   └── route.js
+│   │       │   ├── register
+│   │       │   │   └── route.js
+│   │       │   └── logout
+│   │       │       └── route.js
+│   │       └── polls
+│   │           ├── route.js
+│   │           └── [id]
+│   │               └── route.js
+│   ├── components
+│   │   ├── ui
+│   │   │   ├── button.jsx
+│   │   │   ├── card.jsx
+│   │   │   ├── input.jsx
+│   │   │   ├── label.jsx
+│   │   │   └── form.jsx
+│   │   ├── auth
+│   │   │   ├── LoginForm.jsx
+│   │   │   ├── RegisterForm.jsx
+│   │   │   └── AuthGuard.jsx
+│   │   └── polls
+│   │       ├── PollCard.jsx
+│   │       ├── PollForm.jsx
+│   │       ├── PollList.jsx
+│   │       └── VotingInterface.jsx
+│   ├── lib
+│   │   ├── auth.js
+│   │   ├── database.js
+│   │   └── utils.js
+│   └── hooks
+│       ├── useAuth.js
+│       └── usePolls.js
+├── components.json
+└── tailwind.config.js
+```
 
 ## Getting Started
 
-First, run the development server:
+1. Clone the repository.
+2. Install dependencies using `npm install`.
+3. Run the development server with `npm run dev`.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Contributing
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Feel free to submit issues or pull requests to improve the application. 
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## License
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project is licensed under the MIT License.

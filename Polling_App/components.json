@@ -1,0 +1,31 @@
+{
+  "components": {
+    "ui": [
+      "button.jsx",
+      "card.jsx",
+      "input.jsx",
+      "label.jsx",
+      "form.jsx"
+    ],
+    "auth": [
+      "LoginForm.jsx",
+      "RegisterForm.jsx",
+      "AuthGuard.jsx"
+    ],
+    "polls": [
+      "PollCard.jsx",
+      "PollForm.jsx",
+      "PollList.jsx",
+      "VotingInterface.jsx"
+    ]
+  },
+  "lib": [
+    "auth.js",
+    "database.js",
+    "utils.js"
+  ],
+  "hooks": [
+    "useAuth.js",
+    "usePolls.js"
+  ]
+}
