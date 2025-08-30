@@ -1,3 +1,5 @@
+@import 'tailwindcss';
+
 :root {
   --primary-color: #1d4ed8; /* Example primary color */
   --secondary-color: #fbbf24; /* Example secondary color */
@@ -12,7 +14,12 @@ body {
   color: var(--text-color);
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   margin: 0;
   font-weight: 600;
 }
