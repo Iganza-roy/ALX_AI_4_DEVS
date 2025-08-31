@@ -1,6 +1,8 @@
+'use client';
+
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { supabase } from '../lib/supabase'; // Adjust path as needed
+import { supabase } from '../lib/supabase';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
 
