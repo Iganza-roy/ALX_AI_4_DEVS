@@ -41,6 +41,7 @@ The project uses the following technologies. Do not introduce new libraries or f
 - Use a form that calls a Server Action to handle data submission. This keeps client-side JavaScript minimal.
 - Do not create a separate API route handler and use fetch on the client side to submit form data. Use Server Actions instead.
 - Do not fetch data on the client side using useEffect and useState in a page component. Fetch data directly in a Server Component.
+- When importing modules or components, double check the location of the same to ensure that it is right.
 
 ## Verification Checklist
 

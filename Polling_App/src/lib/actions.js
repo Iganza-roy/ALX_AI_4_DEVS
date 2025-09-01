@@ -53,3 +53,62 @@ export async function createPoll(formData) {
 
   redirect(`/polls/${pollId}`);
 }
+
+export async function getPolls() {
+  'use server';
+
+  const { data, error } = await supabase.from('polls').select(`
+    id,
+    title,
+    image_url,
+    created_at,
+    poll_options ( id, option_text, votes )
+  `);
+
+  if (error) {
+    console.error('Error fetching polls:', error);
+    return [];
+  }
+
+  return data;
+}
+
+export async function getPollById(pollId) {
+  'use server';
+
+  const { data, error } = await supabase
+    .from('polls')
+    .select(
+      `
+      id,
+      title,
+      image_url,
+      created_at,
+      poll_options ( id, option_text, votes )
+    `
+    )
+    .eq('id', pollId)
+    .single();
+
+  if (error) {
+    console.error('Error fetching poll by ID:', error);
+    return null;
+  }
+
+  return data;
+}
+
+export async function votePoll(optionId) {
+  'use server';
+
+  const { data, error } = await supabase.rpc('increment_vote', {
+    option_id: optionId,
+  });
+
+  if (error) {
+    console.error('Error voting:', error);
+    return { success: false, error: error.message };
+  }
+
+  return { success: true };
+}
