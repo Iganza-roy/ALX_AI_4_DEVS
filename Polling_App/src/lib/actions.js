@@ -33,9 +33,11 @@ export async function createPoll(formData) {
     .insert([{ title, image_url: imageUrl }])
     .select();
 
-  if (error) {
-    console.error('Error creating poll:', error);
-    // Handle error
+  if (error || !data || data.length === 0) {
+    console.error('Error creating poll or no data returned:', error);
+    // You might want to throw an error or return a specific error object here
+    // For now, let's just return to prevent further execution and indicate failure.
+    return { error: error?.message || 'Failed to create poll.' };
   }
 
   const pollId = data[0].id;
@@ -48,7 +50,9 @@ export async function createPoll(formData) {
 
   if (optionsError) {
     console.error('Error creating poll options:', optionsError);
-    // Handle error
+    // Handle error, maybe return early or throw
+    // You might also consider rolling back the poll creation if options fail
+    return { error: optionsError.message };
   }
 
   redirect(`/polls/${pollId}`);

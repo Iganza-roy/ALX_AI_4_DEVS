@@ -1,5 +1,5 @@
-import { supabase } from "./supabase";
-import { redirect } from "next/navigation";
+import { supabase } from './supabase';
+import { redirect } from 'next/navigation';
 
 export async function signUp(formData) {
   'use server';
@@ -55,7 +55,10 @@ export async function signOut() {
 export async function getUser() {
   'use server';
 
-  const { data: { user }, error } = await supabase.auth.getUser();
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
 
   if (error) {
     console.error('Get user error:', error);

@@ -1,53 +1,27 @@
-'use client';
-
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { supabase } from '../lib/supabase';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
+import { signUp, signIn } from '../lib/auth';
 
 export default function AuthForm({ type }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const router = useRouter();
-
-  const handleAuth = async (event) => {
-    event.preventDefault();
-    setLoading(true);
-
-    const { error } =
-      type === 'login'
-        ? await supabase.auth.signInWithPassword({ email, password })
-        : await supabase.auth.signUp({ email, password });
-
-    if (error) {
-      alert(error.message);
+  const handleSubmit = async (formData) => {
+    if (type === 'login') {
+      const { error } = await signIn(formData);
+      if (error) {
+        alert(error);
+      }
     } else {
-      router.push('/polls');
+      const { error } = await signUp(formData);
+      if (error) {
+        alert(error);
+      }
     }
-    setLoading(false);
   };
 
   return (
-    <form onSubmit={handleAuth} className='flex flex-col space-y-4'>
-      <Input
-        type='email'
-        placeholder='Email'
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-      />
-      <Input
-        type='password'
-        placeholder='Password'
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required
-      />
-      <Button type='submit' disabled={loading}>
-        {loading ? 'Loading...' : type === 'login' ? 'Login' : 'Register'}
-      </Button>
+    <form action={handleSubmit} className='flex flex-col space-y-4'>
+      <Input type='email' placeholder='Email' name='email' required />
+      <Input type='password' placeholder='Password' name='password' required />
+      <Button type='submit'>{type === 'login' ? 'Login' : 'Register'}</Button>
     </form>
   );
 }
