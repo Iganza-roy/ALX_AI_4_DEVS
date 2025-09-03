@@ -12,7 +12,7 @@ import {
 import { Progress } from './ui/progress';
 import { votePoll } from '../lib/actions';
 
-export default function PollDetail({ poll }) {
+export default async function PollDetail({ poll }) {
   if (!poll) {
     return (
       <div className='text-center py-8 text-gray-500'>Poll not found.</div>

@@ -1,15 +1,14 @@
-"use server"
-
-import PollDetail from '../../../../src/components/PollDetail';
-import { getPollById } from '../../../../src/lib/actions';
+import { getPollById } from '@/lib/actions';
+import PollDetail from '@/components/PollDetail';
+import { notFound } from 'next/navigation';
 
 export default async function PollDetailPage({ params }) {
-  const { pollId } = params;
+  const pollId = params.pollId;
   const poll = await getPollById(pollId);
 
-  return (
-    <div className='container mx-auto p-4'>
-      <PollDetail poll={poll} />
-    </div>
-  );
+  if (!poll) {
+    notFound();
+  }
+
+  return <PollDetail initialPoll={poll} />;
 }

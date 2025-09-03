@@ -55,7 +55,7 @@ export async function createPoll(formData) {
     return { error: optionsError.message };
   }
 
-  redirect(`/polls/${pollId}`);
+  redirect('/polls');
 }
 
 export async function getPolls() {
@@ -78,8 +78,6 @@ export async function getPolls() {
 }
 
 export async function getPollById(pollId) {
-  'use server';
-
   const { data, error } = await supabase
     .from('polls')
     .select(
@@ -88,11 +86,15 @@ export async function getPollById(pollId) {
       title,
       image_url,
       created_at,
-      poll_options ( id, option_text, votes )
+      poll_options (
+        id,
+        option_text,
+        votes
+      )
     `
     )
     .eq('id', pollId)
-    .single();
+    .maybeSingle();
 
   if (error) {
     console.error('Error fetching poll by ID:', error);
