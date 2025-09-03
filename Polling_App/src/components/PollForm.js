@@ -1,6 +1,5 @@
 import { Input } from '../components/ui/input';
 import { Button } from '../components/ui/button';
-// Poll creation form component placeholder
 export default function PollForm() {
   return (
     <form className='space-y-4'>

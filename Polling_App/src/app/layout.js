@@ -16,31 +16,43 @@ export default function RootLayout({ children }) {
     <html lang='en'>
       <body className={inter.className}>
         <AuthProvider>
-          <nav className='bg-gray-800 p-4'>
-            <ul className='flex space-x-4'>
+          <nav className='bg-gray-800 p-4 shadow-md'>
+            <ul className='flex items-center justify-center gap-8'>
               <li>
-                <Link href='/' className='text-white'>
+                <Link
+                  href='/'
+                  className='text-white transition-colors hover:text-gray-300'
+                >
                   Home
                 </Link>
               </li>
               <li>
-                <Link href='/polls/create' className='text-white'>
+                <Link
+                  href='/polls/create'
+                  className='text-white transition-colors hover:text-gray-300'
+                >
                   Create Poll
                 </Link>
               </li>
               <li>
-                <Link href='/auth/login' className='text-white'>
+                <Link
+                  href='/auth/login'
+                  className='text-white transition-colors hover:text-gray-300'
+                >
                   Login
                 </Link>
               </li>
               <li>
-                <Link href='/auth/register' className='text-white'>
+                <Link
+                  href='/auth/register'
+                  className='text-white transition-colors hover:text-gray-300'
+                >
                   Register
                 </Link>
               </li>
             </ul>
           </nav>
-          <ProtectedRoute>{children}</ProtectedRoute>
+          <main className='p-4'>{children}</main>
         </AuthProvider>
       </body>
     </html>
