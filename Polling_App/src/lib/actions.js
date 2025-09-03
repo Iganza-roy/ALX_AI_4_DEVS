@@ -1,66 +1,92 @@
 'use server';
 
 import { redirect } from 'next/navigation';
+import { revalidatePath } from 'next/cache';
 import { supabase } from './supabase';
 
+const STORAGE_BUCKET = 'poll-images'; // replace with your bucket name
+const STORAGE_PREFIX = 'poll_images';
+
+// Small helper to centralize file uploads to Supabase Storage
+async function uploadFileToBucket(file, { bucket, prefix } = {}) {
+  if (!file || !file.size) return { path: null, error: null };
+
+  const ext = file.name?.split('.').pop() || 'bin';
+  const fileName = `${Date.now()}-${Math.random()
+    .toString(36)
+    .slice(2)}.${ext}`;
+  const filePath = prefix ? `${prefix}/${fileName}` : fileName;
+
+  const { data, error } = await supabase.storage
+    .from(bucket)
+    .upload(filePath, file, {
+      upsert: false,
+    });
+
+  if (error) return { path: null, error };
+  return { path: data.path, error: null };
+}
+
+// Util: normalize and validate simple strings
+function normalizeInput(value) {
+  return (value ?? '').toString().trim();
+}
+
 export async function createPoll(formData) {
-  const title = formData.get('title');
-  const option1 = formData.get('option1');
-  const option2 = formData.get('option2');
+  const title = normalizeInput(formData.get('title'));
+  const option1 = normalizeInput(formData.get('option1'));
+  const option2 = normalizeInput(formData.get('option2'));
   const image = formData.get('image');
 
-  // Handle image upload if an image is provided
-  let imageUrl = null;
+  if (!title || !option1 || !option2) {
+    return { ok: false, error: 'Title and two options are required.' };
+  }
+
+  // Upload image if provided
+  let imagePath = null;
   if (image && image.size > 0) {
-    const fileExt = image.name.split('.').pop();
-    const fileName = `${Math.random()}.${fileExt}`;
-    const filePath = `poll_images/${fileName}`;
-
-    const { data: uploadData, error: uploadError } = await supabase.storage
-      .from('poll-images') // Replace with your bucket name
-      .upload(filePath, image, { upsert: false });
-
+    const { path, error: uploadError } = await uploadFileToBucket(image, {
+      bucket: STORAGE_BUCKET,
+      prefix: STORAGE_PREFIX,
+    });
     if (uploadError) {
       console.error('Error uploading image:', uploadError);
-      // Handle error, maybe return early or throw
+      return { ok: false, error: 'Failed to upload image.' };
     }
-    imageUrl = uploadData.path;
+    imagePath = path;
   }
 
-  // Insert poll data into Supabase
-  const { data, error } = await supabase
+  // Insert poll and return the inserted row
+  const { data: poll, error: pollError } = await supabase
     .from('polls')
-    .insert([{ title, image_url: imageUrl }])
-    .select();
+    .insert([{ title, image_url: imagePath }])
+    .select('id')
+    .single();
 
-  if (error || !data || data.length === 0) {
-    console.error('Error creating poll or no data returned:', error);
-    // You might want to throw an error or return a specific error object here
-    // For now, let's just return to prevent further execution and indicate failure.
-    return { error: error?.message || 'Failed to create poll.' };
+  if (pollError || !poll?.id) {
+    console.error('Error creating poll:', pollError);
+    return { ok: false, error: pollError?.message || 'Failed to create poll.' };
   }
-
-  const pollId = data[0].id;
 
   // Insert poll options
   const { error: optionsError } = await supabase.from('poll_options').insert([
-    { poll_id: pollId, option_text: option1 },
-    { poll_id: pollId, option_text: option2 },
+    { poll_id: poll.id, option_text: option1 },
+    { poll_id: poll.id, option_text: option2 },
   ]);
 
   if (optionsError) {
     console.error('Error creating poll options:', optionsError);
-    // Handle error, maybe return early or throw
-    // You might also consider rolling back the poll creation if options fail
-    return { error: optionsError.message };
+    return { ok: false, error: optionsError.message };
   }
+
+  // Revalidate list and the new poll page
+  revalidatePath('/polls');
+  revalidatePath(`/polls/${poll.id}`);
 
   redirect('/polls');
 }
 
 export async function getPolls() {
-  'use server';
-
   const { data, error } = await supabase.from('polls').select(`
     id,
     title,
@@ -105,7 +131,9 @@ export async function getPollById(pollId) {
 }
 
 export async function votePoll(optionId) {
-  'use server';
+  if (!optionId) {
+    return { success: false, error: 'Option ID is required.' };
+  }
 
   const { data, error } = await supabase.rpc('increment_vote', {
     option_id: optionId,
@@ -114,6 +142,20 @@ export async function votePoll(optionId) {
   if (error) {
     console.error('Error voting:', error);
     return { success: false, error: error.message };
+  }
+
+  // Try to revalidate affected paths (list and specific poll page)
+  revalidatePath('/polls');
+
+  // Best effort: fetch poll_id for this option to revalidate its page too
+  const { data: optionRow, error: fetchOptionError } = await supabase
+    .from('poll_options')
+    .select('poll_id')
+    .eq('id', optionId)
+    .single();
+
+  if (!fetchOptionError && optionRow?.poll_id) {
+    revalidatePath(`/polls/${optionRow.poll_id}`);
   }
 
   return { success: true };
