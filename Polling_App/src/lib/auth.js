@@ -1,9 +1,12 @@
+'use server';
+
 import { supabase } from './supabase';
 import { redirect } from 'next/navigation';
+import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
+import { NextResponse } from 'next/server';
 
 export async function signUp(formData) {
-  'use server';
-
   const email = formData.get('email');
   const password = formData.get('password');
 
@@ -21,8 +24,6 @@ export async function signUp(formData) {
 }
 
 export async function signIn(formData) {
-  'use server';
-
   const email = formData.get('email');
   const password = formData.get('password');
 
@@ -36,7 +37,7 @@ export async function signIn(formData) {
     return { error: error.message };
   }
 
-  redirect('/polls'); // Redirect to polls page after successful login
+  redirect('/'); // Redirect to home page after successful login
 }
 
 export async function signOut() {
@@ -66,4 +67,17 @@ export async function getUser() {
   }
 
   return user;
+}
+
+export async function GET(request) {
+  const requestUrl = new URL(request.url);
+  const code = requestUrl.searchParams.get('code');
+
+  if (code) {
+    const supabase = createRouteHandlerClient({ cookies });
+    await supabase.auth.exchangeCodeForSession(code);
+  }
+
+  // URL to redirect to after sign in process completes
+  return NextResponse.redirect(requestUrl.origin);
 }

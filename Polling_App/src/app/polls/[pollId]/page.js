@@ -1,3 +1,5 @@
+"use server"
+
 import PollDetail from '../../../../src/components/PollDetail';
 import { getPollById } from '../../../../src/lib/actions';
 

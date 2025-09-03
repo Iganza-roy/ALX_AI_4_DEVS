@@ -2,7 +2,7 @@
 
 import { Input } from './ui/input';
 import { Button } from './ui/button';
-import { signUp, signIn } from '../lib/actions';
+import { signUp, signIn } from '../lib/auth';
 
 export default function AuthForm({ type }) {
   return (

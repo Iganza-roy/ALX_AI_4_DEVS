@@ -1,9 +1,9 @@
+'use server';
+
 import { redirect } from 'next/navigation';
 import { supabase } from './supabase';
 
 export async function createPoll(formData) {
-  'use server';
-
   const title = formData.get('title');
   const option1 = formData.get('option1');
   const option2 = formData.get('option2');
